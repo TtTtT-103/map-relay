@@ -2,63 +2,68 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Googleマップへ移動</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background-color: #f4f4f4; }
-        .container { background: #fff; padding: 40px 30px; border-radius: 12px; margin: 0 auto; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #333; margin-top: 0; }
-        p { color: #666; margin-bottom: 30px; line-height: 1.6; }
+        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background-color: #fff; color: #333; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; font-size: 20px; color: #4285F4; }
+        p { margin-bottom: 30px; font-size: 14px; line-height: 1.6; }
+        
+        /* ボタンのデザイン */
         .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 18px; 
-            background-color: #4285F4; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 18px; 
-            box-sizing: border-box; 
-            transition: background 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: block; width: 100%; padding: 20px; 
+            background-color: #4285F4; color: white; 
+            text-decoration: none; border-radius: 8px; 
+            font-weight: bold; font-size: 18px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
         }
-        .btn:hover { background-color: #357ae8; }
-        .footer { margin-top: 20px; font-size: 12px; color: #aaa; }
+        .btn:hover { opacity: 0.9; }
+        
+        .debug { margin-top: 30px; font-size: 11px; color: #999; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 4px; word-break: break-all; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>経路検索の準備完了</h2>
-        <p>
-            Googleマップで経路を表示します。<br>
-            下のボタンを押してください。
-        </p>
+        <h2>経路検索</h2>
+        <p>準備ができました。<br>下のボタンを押して地図を開いてください。</p>
         
-        <a id="link" href="#" class="btn" target="_blank" rel="noopener noreferrer">Googleマップを開く</a>
-        
-        <div class="footer">防府市公園ナビ</div>
+        <a id="link" href="#" class="btn" rel="noreferrer">Googleマップを開く</a>
+
+        <div class="debug">
+            <strong>Check:</strong><br>
+            <span id="debug-info">データ待機中...</span>
+        </div>
     </div>
 
     <script>
-        // URLパラメータを取得 (o=起点, d=終点, m=手段)
-        const params = new URLSearchParams(window.location.search);
-        const origin = params.get('o');
-        const dest = params.get('d');
-        const mode = params.get('m') || 'driving';
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const origin = params.get('o');
+            const dest = params.get('d');
+            const mode = params.get('m') || 'driving';
 
-        // リンク要素を取得
-        const linkBtn = document.getElementById('link');
+            const debugInfo = document.getElementById('debug-info');
+            const linkBtn = document.getElementById('link');
 
-        if (origin && dest) {
-            // Googleマップ公式URL (Universal Link) を生成
-            // 自動転送はせず、このURLをボタンにセットするだけにする
-            const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=${mode}`;
-            
-            linkBtn.href = mapsUrl;
-        } else {
-            // エラー表示
-            document.querySelector('.container').innerHTML = '<h3>エラー</h3><p>経路情報が見つかりませんでした。<br>Re:Earthから再度実行してください。</p>';
+            if (origin && dest) {
+                // Googleマップ公式URL
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=${mode}`;
+                
+                // ボタンにURLをセット
+                linkBtn.href = mapsUrl;
+                
+                debugInfo.innerHTML = `URL生成完了: <br>${origin} → ${dest} (${mode})`;
+            } else {
+                debugInfo.innerText = "エラー: 緯度経度データがURLに含まれていません。";
+                linkBtn.style.backgroundColor = "#ccc";
+                linkBtn.style.pointerEvents = "none";
+                linkBtn.innerText = "データなし";
+            }
+        } catch (e) {
+            document.getElementById('debug-info').innerText = "Script Error: " + e.message;
         }
     </script>
 </body>
