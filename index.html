@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Redirector</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; margin: 0 auto; max-width: 500px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn { display: block; width: 100%; padding: 15px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; box-sizing: border-box; }
+        .btn:hover { background-color: #357ae8; }
+        .message { margin-bottom: 20px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Googleマップへ移動します...</h3>
+        <p class="message">下のボタンを押して地図を開いてください。</p>
+        <a id="link" href="#" class="btn" target="_blank" rel="noopener noreferrer">Googleマップを開く</a>
+    </div>
+
+    <script>
+        // URLパラメータ(o=起点, d=終点, m=手段)を取得
+        const params = new URLSearchParams(window.location.search);
+        const origin = params.get('o');
+        const dest = params.get('d');
+        const mode = params.get('m') || 'driving';
+
+        // パラメータがある場合のみURLを生成
+        if (origin && dest) {
+            // Googleマップ公式URL (Universal Link)
+            // https://www.google.com/maps/dir/?api=1...
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=${mode}`;
+            
+            // ボタンにリンクを設定
+            const linkBtn = document.getElementById('link');
+            linkBtn.href = mapsUrl;
+
+            // 自動クリックはブロックされる可能性があるため、ユーザーに押させる形にします
+        } else {
+            document.querySelector('.container').innerHTML = '<p>エラー: 経路情報が見つかりません。<br>URLパラメータを確認してください。</p>';
+        }
+    </script>
+</body>
+</html>
