@@ -3,42 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Redirector</title>
+    <title>Googleマップへ移動</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
-        .container { background: #fff; padding: 30px; border-radius: 8px; margin: 0 auto; max-width: 500px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { display: block; width: 100%; padding: 15px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; box-sizing: border-box; }
+        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background-color: #f4f4f4; }
+        .container { background: #fff; padding: 40px 30px; border-radius: 12px; margin: 0 auto; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-top: 0; }
+        p { color: #666; margin-bottom: 30px; line-height: 1.6; }
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 18px; 
+            background-color: #4285F4; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 18px; 
+            box-sizing: border-box; 
+            transition: background 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
         .btn:hover { background-color: #357ae8; }
-        .message { margin-bottom: 20px; color: #333; }
+        .footer { margin-top: 20px; font-size: 12px; color: #aaa; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3>Googleマップへ移動します...</h3>
-        <p class="message">下のボタンを押して地図を開いてください。</p>
+        <h2>経路検索の準備完了</h2>
+        <p>
+            Googleマップで経路を表示します。<br>
+            下のボタンを押してください。
+        </p>
+        
         <a id="link" href="#" class="btn" target="_blank" rel="noopener noreferrer">Googleマップを開く</a>
+        
+        <div class="footer">防府市公園ナビ</div>
     </div>
 
     <script>
-        // URLパラメータ(o=起点, d=終点, m=手段)を取得
+        // URLパラメータを取得 (o=起点, d=終点, m=手段)
         const params = new URLSearchParams(window.location.search);
         const origin = params.get('o');
         const dest = params.get('d');
         const mode = params.get('m') || 'driving';
 
-        // パラメータがある場合のみURLを生成
+        // リンク要素を取得
+        const linkBtn = document.getElementById('link');
+
         if (origin && dest) {
-            // Googleマップ公式URL (Universal Link)
-            // https://www.google.com/maps/dir/?api=1...
+            // Googleマップ公式URL (Universal Link) を生成
+            // 自動転送はせず、このURLをボタンにセットするだけにする
             const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=${mode}`;
             
-            // ボタンにリンクを設定
-            const linkBtn = document.getElementById('link');
             linkBtn.href = mapsUrl;
-
-            // 自動クリックはブロックされる可能性があるため、ユーザーに押させる形にします
         } else {
-            document.querySelector('.container').innerHTML = '<p>エラー: 経路情報が見つかりません。<br>URLパラメータを確認してください。</p>';
+            // エラー表示
+            document.querySelector('.container').innerHTML = '<h3>エラー</h3><p>経路情報が見つかりませんでした。<br>Re:Earthから再度実行してください。</p>';
         }
     </script>
 </body>
